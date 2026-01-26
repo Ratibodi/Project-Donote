@@ -30,25 +30,43 @@ export default function RootLayout({
       <div className="flex h-[calc(100vh-80px)]">
         {/* Sidebar */}
         <aside  className={`
-              ${collapsed ? "w-[80px]" : "w-[260px]"}
-              border-r border-gray-200 p-5 relative
+              ${collapsed ? "w-[100px]" : "w-[300px]"}
+              border-r border-gray-200 p-5 mb-5 relative
               transition-all duration-300
             `}
           >
           <nav className="flex flex-col gap-8">
-            <button className="w-full mb-5  py-5 px-4 rounded-full text-left hover:bg-sky-200 transition">
-              
-              {!collapsed && <span> MY PROJECT</span>}
+            <button className="flex items-center gap-3 py-4 px-4 rounded-full hover:bg-sky-200 transition">
+              <img src="/icon/MYPROJECT.svg" className="w-5 h-5 shrink-0" />
+              <span
+                className={`
+                  transition-all duration-300
+                  ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"}
+                `}>
+                MY PROJECT
+              </span>
             </button>
 
-            <button className="w-full mb-5  py-5 px-4 rounded-full text-left hover:bg-sky-200 transition">
-              <img src="/icon/CALENDAR.svg" className="w-5 h-5 inline mr-2" /> 
-              {!collapsed && <span>CALENDAR</span>}
+            <button className="flex items-center gap-3 py-4 px-4 rounded-full hover:bg-sky-200 transition">
+              <img src="/icon/CALENDAR.svg" className="w-5 h-5 shrink-0" />
+              <span
+                className={`
+                  transition-all duration-300
+                  ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"}
+                `}>
+                CALENDAR
+              </span>
             </button>
 
-            <button className="w-full mb-5  py-5 px-4 rounded-full text-left hover:bg-sky-200 transition">
-          
-              {!collapsed && <span>MY WORK</span>}
+            <button className="flex items-center gap-3 py-4 px-4 rounded-full hover:bg-sky-200 transition">
+              <img src="/icon/MYWORK.svg" className="w-5 h-5 shrink-0" />
+              <span
+                className={`
+                  transition-all duration-300
+                  ${collapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto"}
+                `}>
+                MY WORK
+              </span>
             </button>
           </nav>
 
