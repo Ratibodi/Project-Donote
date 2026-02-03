@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export default function ClientLayout({
   children,
-}: {
+ }: {
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);

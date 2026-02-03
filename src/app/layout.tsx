@@ -1,5 +1,5 @@
 import "./globals.css";
-import ClientLayout from "./ClientLayout/ClientLayout";
+import ClientLayout from "./ClientLayout/page";
 
 export const metadata = {
   title: "Donote",
