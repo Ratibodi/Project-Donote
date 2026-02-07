@@ -14,16 +14,12 @@ export default function ClientLayout() {
 
   return (
     <div className="h-screen bg-[#f5f7fa] overflow-hidden">
-
-      {/* ================= Topbar ================= */}
       <header className="h-[80px] bg-white flex justify-between items-center px-15">
 
-        {/* Logo */}
         <div className="flex items-center gap-3">
           <img src="/icon/logo2.png" alt="Logo" className="h-[225] w-[225]"/>
         </div>
 
-        {/* Right Menu */}
         <div className="flex items-center gap-4">
           <button className="flex items-center justify-center bg-[#131376] h-[40] w-[120] rounded-2xl gap-2">
             <div className="text-[15] text-white">Log In</div>
@@ -41,13 +37,10 @@ export default function ClientLayout() {
         </div>
       </header>
 
-      {/* ================= Body ================= */}
       <div className="flex h-screen">
-
-        {/* ---------- Sidebar ---------- */}
         <aside
           className={`
-            h-[520] w-[300]
+            h-[600] w-[300]
             bg-white rounded-[20px]
             border-r border-gray-200 p-5 relative
             transition-all duration-300 ml-5 mt-3
@@ -55,7 +48,6 @@ export default function ClientLayout() {
         >
         </aside>
 
-        {/* ---------- Main Content ---------- */}
         <main className="flex-1 p-5 overflow-auto">
           <div className="w-[230] h-[230] bg-white rounded-2xl flex items-center justify-center">
             <button className="items-center justify-center w-[200] h-[200] border-2 border-dashed border-gray-500 rounded-2xl text-sm hover:bg-gray-400 transition">
@@ -66,7 +58,6 @@ export default function ClientLayout() {
             </button>
           </div>
         </main>
-
       </div>
     </div>
   );
