@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { BookOpen, Calendar, Clipboard } from "lucide-react"
+
+const menu = [
+  { label: "MY PROJECT", icon: BookOpen },
+  { label: "CALENDAR", icon: Calendar },
+  { label: "MY WORK", icon: Clipboard },
+]
 
 export default function ClientLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -13,44 +19,89 @@ export default function ClientLayout() {
   };
 
   return (
-    <div className="h-screen bg-[#f5f7fa] overflow-hidden">
+    <div className="h-screen bg-gray-100 overflow-hidden">
       <header className="h-[80px] bg-white flex justify-between items-center px-15">
 
         <div className="flex items-center gap-3">
-          <img src="/icon/logo2.png" alt="Logo" className="h-[225] w-[225]"/>
+          <img src="/icon/logo2.png" alt="Logo" className="h-[225px] w-[225px]"/>
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="flex items-center justify-center bg-[#131376] h-[40] w-[120] rounded-2xl gap-2">
-            <div className="text-[15] text-white">Log In</div>
-          </button>
-
           <Link href="/user/login" className="inline-flex items-center">
-            {user.isLogin ? (
-              <img src="/user/account.png" className="h-[40px] w-[40px]"/>
-            ) : (
-              <span className="bg-indigo-900 text-white px-4 py-2 rounded-full text-sm">
-                Log in
-              </span>
-            )}
-          </Link>
+                <button className="flex items-center justify-center bg-[#131376] text-white text-[15] h-[40] w-[120] rounded-2xl gap-2 cursor-pointer hover:bg-gray-500">
+                  Log in
+                </button>
+            </Link>
+          {user.isLogin  && ( user.avatar && (
+            <img src={user.avatar} className="h-[40px] w-[40px] rounded-full" alt="avatar" />)
+          )}
         </div>
       </header>
 
       <div className="flex h-screen">
         <aside
-          className={`
-            h-[600] w-[300]
-            bg-white rounded-[20px]
-            border-r border-gray-200 p-5 relative
-            transition-all duration-300 ml-5 mt-3
-          `}
-        >
-        </aside>
+        className="
+          group
+          h-[530px]
+          bg-white
+          rounded-2xl
+          w-[75px] hover:w-64
+          ml-3 mt-3
+          transition-all duration-400
+          overflow-hidden
+        "
+      >
+        <nav className="mt-6 flex flex-col gap-2">
+          {menu.map((item, index) => {
+            const Icon = item.icon
+
+            return (
+              <div
+                key={index}
+                className="
+                  group/item
+                  relative
+                  flex items-center gap-4
+                  px-4 py-3 mx-2
+                  rounded-r-lg
+                  cursor-pointer
+                  hover:bg-[#c5e8f5]
+                  transition
+                "
+              >
+                <span
+                  className="
+                    absolute left-0 top-1/2
+                    -translate-y-1/2
+                    h-[48] w-[8]
+                    bg-[#131376]
+                    opacity-0
+                    group-hover/item:opacity-100
+                    transition
+                  "
+                />
+
+                <Icon className="w-6 h-6 text-black shrink-0" />
+                <span
+                  className="
+                    whitespace-nowrap
+                    text-sm font-semibold
+                    opacity-0
+                    group-hover:opacity-100
+                    transition
+                  "
+                >
+                  {item.label}
+                </span>
+              </div>
+            )
+          })}
+        </nav>
+      </aside>
 
         <main className="flex-1 p-5 overflow-auto">
-          <div className="w-[230] h-[230] bg-white rounded-2xl flex items-center justify-center">
-            <button className="items-center justify-center w-[200] h-[200] border-2 border-dashed border-gray-500 rounded-2xl text-sm hover:bg-gray-400 transition">
+          <div className="w-[230] h-[230] bg-white rounded-2xl flex items-center justify-center hover:bg-gray-200">
+            <button className="items-center justify-center w-[200] h-[200] border-2 border-dashed border-gray-500 rounded-2xl text-sm transition">
               <div className="flex items-center justify-center mb-5">
                 <img src="/icon/add.png " className="w-[60] h-[60]"/>
               </div>
