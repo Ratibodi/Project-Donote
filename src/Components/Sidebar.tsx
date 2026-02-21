@@ -20,7 +20,7 @@ export default function Sidebar() {
     {
       label: "MY WORK",
       icon: Briefcase,
-      path: "/work",
+      path: "/MyWork",
     },
   ];
 
