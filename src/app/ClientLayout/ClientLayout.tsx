@@ -30,7 +30,7 @@ export default function ClientLayout({
                     <span className="text-xl cursor-pointer">🔔</span>
                     {!user.isLogin && (
                     <button className="bg-indigo-900 text-white px-4 py-2 rounded-full text-sm">
-                    Log in
+                        Log in
                     </button>)}
 
                     {/* Profile */}
