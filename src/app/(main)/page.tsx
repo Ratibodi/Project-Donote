@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BookOpen, Calendar, Clipboard } from "lucide-react";
+import WorkCard from "../../Components/workCard";
+
 
 export default function Page() {
   const [user] = useState({
