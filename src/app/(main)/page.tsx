@@ -1,35 +1,72 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { BookOpen, Calendar, Clipboard } from "lucide-react";
-import WorkCard from "../../Components/workCard";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
+type Board = {
+  id: string;
+  name: string;
+  tasks: string[];
+};
 
 export default function Page() {
-  const [user] = useState({
-    isLogin: true,
-    avatar: "/user/user01.jpg",
-  });
+  const router = useRouter();
+  const [boards, setBoards] = useState<Board[]>([]);
 
-  const menu = [
-    { label: "MY PROJECT", icon: BookOpen },
-    { label: "CALENDAR", icon: Calendar },
-    { label: "MY WORK", icon: Clipboard },
-  ];
+  useEffect(() => {
+    const load = async () => {
+      const res = await fetch("/api/boards");
+      const data = await res.json();
+      setBoards(data);
+    };
+
+    load();
+  }, []);
+
+  const createBoard = async () => {
+    const res = await fetch("/api/boards", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: `Project ${boards.length + 1}`,
+      }),
+    });
+
+    const newBoard = await res.json();
+
+    setBoards([...boards, newBoard]);
+
+    router.push(`/board/${newBoard.id}`);
+  };
 
   return (
-    <div className="h-screen bg-gray-100 overflow-hidden">
-      <div className="flex h-screen">
-        <main className="flex-1 p-5 overflow-auto">
-          <div className="w-[230px] h-[230px] bg-white rounded-2xl flex items-center justify-center hover:bg-gray-200">
-            <button className="flex items-center justify-center w-[200px] h-[200px] border-2 border-dashed border-gray-500 rounded-2xl text-sm transition">
-              <div className="flex items-center justify-center mb-5">
-                <img src="/icon/add.png" className="w-[60px] h-[60px]" />
-              </div>
-            </button>
+    <div className="p-10 bg-gray-100 min-h-screen">
+      <div className="flex gap-6 flex-wrap">
+
+        {/* ปุ่มสร้างบอร์ด */}
+        <div
+          onClick={createBoard}
+          className="w-[230px] h-[230px] bg-white rounded-2xl 
+          flex items-center justify-center cursor-pointer 
+          hover:bg-gray-200"
+        >
+          + Create Board
+        </div>
+
+        {/* แสดงบอร์ด */}
+        {boards.map((board) => (
+          <div
+            key={board.id}
+            onClick={() => router.push(`/board/${board.id}`)}
+            className="w-[230px] h-[230px] bg-white rounded-2xl 
+            flex items-center justify-center cursor-pointer 
+            hover:shadow-lg"
+          >
+            {board.name}
           </div>
-        </main>
+        ))}
       </div>
     </div>
   );

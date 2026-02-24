@@ -1,5 +1,5 @@
 
-import { boards } from "../backend/store";
+import { boards } from "@/src/backend/store";
 
 export async function GET() {
   return Response.json(boards);
