@@ -1,116 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Star, Trash2, CalendarDays } from "lucide-react";
 
-type Board = {
-  id: string;
-  name: string;
-  tasks: string[];
-};
-
-export default function Page() {
-  const router = useRouter();
-  const [boards, setBoards] = useState<Board[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [boardName, setBoardName] = useState("");
-
-  // โหลดบอร์ด
-  useEffect(() => {
-    const load = async () => {
-      const res = await fetch("/api/boards");
-      const data = await res.json();
-      setBoards(data);
-    };
-    load();
-  }, []);
-
-  const createBoard = async () => {
-    if (!boardName.trim()) {
-      alert("กรุณาใส่ชื่อบอร์ด");
-      return;
-    }
-
-    const res = await fetch("/api/boards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: boardName }),
-    });
-
-    const newBoard = await res.json();
-
-    setBoards([...boards, newBoard]);
-    setBoardName("");
-    setIsOpen(false);
-
-    router.push(`/board/${newBoard.id}`);
-  };
-
+export default function MyWorkPage() {
   return (
-    <div className="p-10 bg-gray-100 min-h-screen">
-      <div className="flex gap-6 flex-wrap">
+    <div className="p-6 bg-gray-100 min-h-screen">
 
-        {/* ปุ่มสร้างบอร์ดแบบเดิม */}
-        <div
-          onClick={() => setIsOpen(true)}
-          className="w-[230px] h-[230px] bg-white rounded-2xl 
-          flex items-center justify-center cursor-pointer 
-          hover:bg-gray-200"
-        >
-          + Create Board
-        </div>
-
-        {/* แสดงบอร์ด */}
-        {boards.map((board) => (
-          <div
-            key={board.id}
-            onClick={() => router.push(`/board/${board.id}`)}
-            className="w-[230px] h-[230px] bg-white rounded-2xl 
-            flex items-center justify-center cursor-pointer 
-            hover:shadow-lg"
-          >
-            {board.name}
-          </div>
-        ))}
+      {/* Dropdown ด้านขวาบน */}
+      <div className="flex justify-end mb-6">
+        <select className="bg-gray-200 px-4 py-2 rounded-md">
+          <option>สำคัญ</option>
+          <option>ทั้งหมด</option>
+          <option>ใกล้ครบกำหนด</option>
+        </select>
       </div>
 
-      {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl w-80">
-            <h2 className="text-lg font-semibold mb-4">
-              ตั้งชื่อบอร์ด
-            </h2>
+      {/* Card งาน */}
+      <div className="bg-gray-300 rounded-2xl p-6 w-[420px] shadow-md relative">
 
-            <input
-              type="text"
-              placeholder="ชื่อบอร์ด..."
-              value={boardName}
-              onChange={(e) => setBoardName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") createBoard();
-              }}
-              className="w-full px-3 py-2 border rounded-lg mb-4"
-            />
+        {/* ไอคอนขวาบน */}
+        <div className="absolute top-4 right-4 flex gap-3">
+          <Star className="text-yellow-400 cursor-pointer" />
+          <Trash2 className="text-black cursor-pointer" />
+        </div>
 
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
-              >
-                Cancel
-              </button>
+        {/* หัวข้อโปรเจค */}
+        <h2 className="text-xl font-semibold mb-4">
+          ชื่อ : โปรเจ็คของฉัน
+        </h2>
 
-              <button
-                onClick={createBoard}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Create
-              </button>
+        {/* กล่องงานย่อย */}
+        <div className="bg-white rounded-xl p-4 border-l-4 border-pink-400 shadow-sm">
+          <p className="font-medium">UX/UI Desing</p>
+
+          <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
+            <CalendarDays size={16} />
+            <span>2025-11-11</span>
+          </div>
+
+          {/* Progress */}
+          <div className="mt-4">
+            <p className="text-sm mb-1">การดำเนินงาน</p>
+
+            <div className="flex items-center gap-3">
+              <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+                <div className="bg-gray-400 h-3 w-[0%]" />
+              </div>
+              <span className="text-sm font-medium">0%</span>
             </div>
           </div>
         </div>
-      )}
+      </div>
+
     </div>
   );
 }
