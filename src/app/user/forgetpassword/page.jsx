@@ -2,34 +2,27 @@
 
 import React, { useState } from 'react'
 
-export default function Signup(){
-    const [username, setUsername] = useState("")
+export default function Forgetpassword(){
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
-
+    
     const [errors, setErrors] = useState({
-        username: "",
         email: "",
         password: "",
         confirmPassword: ""
     })
-
+    
     const handleSubmit = () => {
-
+    
         let newErrors = {
-            username: "",
             email: "",
             password: "",
             confirmPassword: ""
         }
-
-        if (!username.trim()) {
-            newErrors.username = "กรุณากรอกชื่อผู้ใช้"
-        }
-
+    
         if (!email.includes("@") || email.includes(" ")) {
-            newErrors.email = "กรุณากรอกอีเมลให้ถูกต้อง"
+            newErrors.email = "อีเมลไม่ถูกต้อง"
         }
 
         if (password.length < 8) {
@@ -46,30 +39,16 @@ export default function Signup(){
 
         setErrors(newErrors)
 
-        if (!newErrors.username && !newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
-        alert("สมัครสมาชิกสำเร็จ")
+        if (!newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
+        alert("เปลี่ยนรหัสผ่านสำเร็จ")
         }
     }
 
     return(
-        <div className="bg-[#bae5f4] min-h-screen flex items-center justify-center">
-            <div className='flex flex-col items-center justify-center w-[750px] h-[600px] bg-white border rounded-2xl'>
+       <div className="bg-[#bae5f4] min-h-screen flex items-center justify-center">
+            <div className='flex flex-col items-center justify-center w-[750px] h-[550px] bg-white border rounded-2xl'>
                 <img src="/icon/logo.png" className='w-[150px] h-[150px]'/>
                     <div className='group flex flex-col'>
-                        <span className='text-[13px] font-bold'>ชื่อผู้ใช้</span>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-[500px] h-[48px] px-5 rounded-full border border-gray-400 outline-none"
-                        />
-                        {errors.username && (
-                            <span className="text-[#CC0000] text-[11px] mt-1 ml-3">
-                            {errors.username}
-                            </span>
-                        )}
-                    </div>
-                    <div className='group flex flex-col mt-2'>
                         <span className='text-[13px] font-bold'>อีเมล</span>
                         <input
                             type="email"
@@ -83,7 +62,8 @@ export default function Signup(){
                             </span>
                         )}
                     </div>
-                    <div className='group flex flex-col mt-2'>
+
+                    <div className='group flex flex-col mt-3'>
                         <span className='text-[13px] font-bold'>รหัสผ่าน</span>
                         <input
                             type="password"
@@ -97,7 +77,8 @@ export default function Signup(){
                             </span>
                         )}
                     </div>
-                    <div className='group flex flex-col mt-2'>
+
+                    <div className='group flex flex-col mt-3'>
                         <span className='text-[13px] font-bold'>ยืนยันรหัสผ่าน</span>
                         <input
                             type="password"
@@ -112,8 +93,20 @@ export default function Signup(){
                         )}
                     </div>
 
-                    <button onClick={handleSubmit} className='w-[200px] h-[40px] bg-[#131376] rounded-2xl text-white text-[14px] font-bold mt-[20px]'>สมัครสมาชิก</button>
+                    
+                    <button onClick={handleSubmit} 
+                    className='
+                    w-[200px] 
+                    h-[40px] 
+                    bg-[#131376] 
+                    rounded-2xl 
+                    text-white 
+                    text-[14px] 
+                    font-bold 
+                    mt-[70px]'>
+                        เข้าสู่ระบบ
+                    </button>
             </div>
-        </div>      
+        </div>
     )
 }
