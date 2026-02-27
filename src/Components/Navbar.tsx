@@ -26,14 +26,14 @@ export default function Navbar(): JSX.Element {
         {!user?.isLogin && (
           <>
             <Link
-              href="/user/login"
+              href="/login"
               className="px-4 py-2 rounded-xl border border-[#131376] text-[#131376]"
             >
               เข้าสู่ระบบ
             </Link>
 
             <Link
-              href="/user/register"
+              href="/signup"
               className="px-4 py-2 rounded-xl bg-[#131376] text-white"
             >
               ลงทะเบียน

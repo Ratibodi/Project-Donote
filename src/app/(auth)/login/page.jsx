@@ -2,41 +2,55 @@
 
 import React, { useState } from 'react'
 import Link from "next/link"
+import { useRouter } from "next/navigation";
 
-export default function Login(){
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+export default function Login() {
+  const router = useRouter();
 
-    const [errors, setErrors] = useState({
-        email: "",
-        password: "",
-    })
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const handleSubmit = () => {
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
 
-        let newErrors = {
-            email: "",
-            password: "",
-        }
+  const handleSubmit = async () => {
+    let newErrors = {
+      email: "",
+      password: "",
+    };
 
-        if (!email.includes("@") || email.includes(" ")) {
-            newErrors.email = "อีเมลไม่ถูกต้อง"
-        }
-
-        if (password.length < 8) {
-            newErrors.password = "รหัสผ่านไม่ถูกต้อง"
-        }
-
-        if (password.includes(" ")) {
-            newErrors.password = "รหัสผ่านห้ามมีช่องว่าง"
-        }
-
-        setErrors(newErrors)
-
-        if (!newErrors.email && !newErrors.password) {
-        alert("เข้าสู่ระบบสำเร็จ")
-        }
+    if (!email.includes("@") || email.includes(" ")) {
+      newErrors.email = "อีเมลไม่ถูกต้อง";
     }
+
+    if (password.length < 8) {
+      newErrors.password = "รหัสผ่านต้องอย่างน้อย 8 ตัว";
+    }
+
+    if (password.includes(" ")) {
+      newErrors.password = "รหัสผ่านห้ามมีช่องว่าง";
+    }
+
+    setErrors(newErrors);
+
+    if (!newErrors.email && !newErrors.password) {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        router.push("/");
+      } else {
+        alert(data.error || "เข้าสู่ระบบไม่สำเร็จ");
+      }
+    }
+  };
 
     return(
         <div className="bg-[#bae5f4] min-h-screen flex items-center justify-center">
