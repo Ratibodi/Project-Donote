@@ -1,6 +1,6 @@
 
-import Navbar from "@/components/Sidebar";
-import Sidebar  from "@/components/Navbar";
+import Navbar from "../../components/Navbar";
+import Sidebar  from "../../components/Sidebar";
 
 export const metadata = {
   title: "Donote",
