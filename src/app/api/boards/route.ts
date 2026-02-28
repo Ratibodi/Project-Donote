@@ -11,7 +11,7 @@ type BoardInput = {
   content: string
 }
 
-// ================= GET =================
+
 export async function GET(
   request: Request,
   context: { env: Env }
