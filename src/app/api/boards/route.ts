@@ -1,20 +1,62 @@
+import type { Env } from "@/src/types/env"
 
-import { boards } from "@/src/backend/store";
-
-export async function GET() {
-  return Response.json(boards);
+type Board = {
+  id: number
+  title: string
+  content: string
 }
 
-export async function POST(req: Request) {
-  const body = await req.json();
+type BoardInput = {
+  title: string
+  content: string
+}
 
-  const newBoard = {
-    id: crypto.randomUUID(),
-    name: body.name,
-    tasks: [],
-  };
+// ================= GET =================
+export async function GET(
+  request: Request,
+  context: { env: Env }
+) {
+  try {
+    const { results } = await context.env.DB
+      .prepare("SELECT * FROM boards ORDER BY id DESC")
+      .all()
 
-  boards.push(newBoard);
+    return Response.json(results)
+  } catch (error) {
+    return Response.json(
+      { error: "Failed to fetch boards" },
+      { status: 500 }
+    )
+  }
+}
 
-  return Response.json(newBoard);
+// ================= POST =================
+export async function POST(
+  request: Request,
+  context: { env: Env }
+) {
+  try {
+    const body = (await request.json()) as BoardInput
+
+    if (!body.title || !body.content) {
+      return Response.json(
+        { error: "Missing title or content" },
+        { status: 400 }
+      )
+    }
+
+    await context.env.DB
+      .prepare(
+        "INSERT INTO boards (title, content) VALUES (?, ?)"
+      )
+      .bind(body.title, body.content)
+      .run()
+
+    return Response.json({ success: true })
+  } catch (error) {
+    return Response.json(
+      { error: "Failed to create board" },
+      { status: 500 }
+    )
+  }
 }
