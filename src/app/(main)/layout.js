@@ -1,6 +1,6 @@
 
-import Navbar from "../../components/Navbar";
-import Sidebar  from "../../components/Sidebar";
+import Navbar from "../../../components/Navbar";
+import Sidebar  from "../../../components/Sidebar";
 
 export const metadata = {
   title: "Donote",
@@ -8,16 +8,12 @@ export const metadata = {
     icon: "/icon/bran.png",
   },
 };
-
-export default function RootLayout({ children }) {
+export default function MainLayout({ children }) {
   return (
-    <html lang="th">
-      <body>
-        <Navbar />
-
-        <Sidebar />
-        {children}
-      </body>
-    </html>
+    <>
+      <Navbar />
+      <Sidebar />
+      {children}
+    </>
   );
 }
