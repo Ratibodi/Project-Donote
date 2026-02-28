@@ -1,0 +1,7 @@
+name = "donote"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "donote-db"
+database_id = "062dfbd0-0d6d-4d3f-a038-fc1c1a244690"

@@ -1,62 +1,130 @@
-import type { Env } from "@/src/types/env"
+export const runtime = "edge";
 
-type Board = {
-  id: number
-  title: string
-  content: string
-}
-
-type BoardInput = {
-  title: string
-  content: string
-}
-
-
+/**
+ * GET  /api/boards
+ * ดึงรายการ boards ทั้งหมด
+ */
 export async function GET(
   request: Request,
-  context: { env: Env }
+  context: { env: any }
 ) {
   try {
-    const { results } = await context.env.DB
-      .prepare("SELECT * FROM boards ORDER BY id DESC")
-      .all()
+    const { env } = context;
 
-    return Response.json(results)
-  } catch (error) {
+    if (!env?.DB) {
+      return Response.json(
+        { error: "Database not configured" },
+        { status: 500 }
+      );
+    }
+
+    const { results } = await env.DB
+      .prepare(
+        `SELECT id, title, user_id, created_at
+         FROM boards
+         ORDER BY created_at DESC`
+      )
+      .all();
+
+    return Response.json(results, { status: 200 });
+  } catch (error: any) {
     return Response.json(
-      { error: "Failed to fetch boards" },
+      { error: error.message || "Internal Server Error" },
       { status: 500 }
-    )
+    );
   }
 }
 
-// ================= POST =================
+/**
+ * POST /api/boards
+ * เพิ่ม board ใหม่
+ * body: { title: string, user_id?: string }
+ */
 export async function POST(
   request: Request,
-  context: { env: Env }
+  context: { env: any }
 ) {
   try {
-    const body = (await request.json()) as BoardInput
+    const { env } = context;
 
-    if (!body.title || !body.content) {
+    if (!env?.DB) {
       return Response.json(
-        { error: "Missing title or content" },
-        { status: 400 }
-      )
+        { error: "Database not configured" },
+        { status: 500 }
+      );
     }
 
-    await context.env.DB
-      .prepare(
-        "INSERT INTO boards (title, content) VALUES (?, ?)"
-      )
-      .bind(body.title, body.content)
-      .run()
+    const body = await request.json();
 
-    return Response.json({ success: true })
-  } catch (error) {
-    return Response.json(
-      { error: "Failed to create board" },
-      { status: 500 }
+    if (!body?.title || body.title.trim() === "") {
+      return Response.json(
+        { error: "Title is required" },
+        { status: 400 }
+      );
+    }
+
+    const id = crypto.randomUUID();
+    const title = body.title.trim();
+    const userId = body.user_id ?? null;
+
+    await env.DB.prepare(
+      `INSERT INTO boards (id, title, user_id)
+       VALUES (?, ?, ?)`
     )
+      .bind(id, title, userId)
+      .run();
+
+    return Response.json(
+      {
+        success: true,
+        id,
+        title,
+      },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    return Response.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE /api/boards?id=xxx
+ * ลบ board ตาม id
+ */
+export async function DELETE(
+  request: Request,
+  context: { env: any }
+) {
+  try {
+    const { env } = context;
+
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+
+    if (!id) {
+      return Response.json(
+        { error: "Board id is required" },
+        { status: 400 }
+      );
+    }
+
+    await env.DB.prepare(
+      `DELETE FROM boards WHERE id = ?`
+    )
+      .bind(id)
+      .run();
+
+    return Response.json(
+      { success: true },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return Response.json(
+      { error: error.message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

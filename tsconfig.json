@@ -28,12 +28,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "apps/frontend/src/*"
       ]
     }
   },
   "include": [
-    "next-env.d.ts",
+    "../../next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
