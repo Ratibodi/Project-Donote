@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,46 +7,62 @@ import { useRouter } from "next/navigation";
 type Board = {
   id: string;
   name: string;
-  tasks: string[];
 };
 
 export default function Page() {
   const router = useRouter();
+
   const [boards, setBoards] = useState<Board[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [boardName, setBoardName] = useState("");
 
-  // โหลดบอร์ด
   useEffect(() => {
-    const load = async () => {
-      const res = await fetch("/api/boards");
-      const data = await res.json();
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    const loadBoards = async () => {
+      const res = await fetch("http://localhost:8787/boards", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data: Board[] = await res.json();
       setBoards(data);
     };
-    load();
-  }, []);
+
+    loadBoards();
+  }, [router]);
 
   const createBoard = async () => {
+    const token = localStorage.getItem("token");
+
     if (!boardName.trim()) {
       alert("กรุณาใส่ชื่อบอร์ด");
       return;
     }
 
-    const res = await fetch("/api/boards", {
+    const res = await fetch("http://localhost:8787/boards", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ name: boardName }),
     });
 
-    const newBoard = await res.json();
+    const newBoard: Board = await res.json();
 
-    setBoards([...boards, newBoard]);
+    setBoards((prev) => [...prev, newBoard]);
     setBoardName("");
     setIsOpen(false);
 
     router.push(`/board/${newBoard.id}`);
   };
-
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
       <div className="flex gap-6 flex-wrap">
