@@ -1,0 +1,79 @@
+import { Hono } from "hono"
+import { authMiddleware } from "../middleware/auth"
+import { nanoid } from "nanoid"
+
+type Bindings = {
+  DB: D1Database
+}
+
+type Variables = {
+  userId: string
+}
+
+const app = new Hono<{
+  Bindings: Bindings
+  Variables: Variables
+}>()
+
+app.use("*", authMiddleware)
+
+
+// GET boards
+app.get("/", async (c) => {
+
+  const userId = c.get("userId")
+
+  const boards = await c.env.DB.prepare(
+    "SELECT * FROM boards WHERE user_id=?"
+  )
+    .bind(userId)
+    .all()
+
+  return c.json(boards.results)
+
+})
+
+
+// CREATE board
+app.post("/", async (c) => {
+
+  const userId = c.get("userId")
+
+  const { name } = await c.req.json()
+
+  const id = nanoid()
+
+  await c.env.DB.prepare(
+    "INSERT INTO boards (id,name,user_id) VALUES (?,?,?)"
+  )
+    .bind(id, name, userId)
+    .run()
+
+  return c.json({
+    id,
+    name
+  })
+
+})
+
+
+// DELETE board
+app.delete("/:id", async (c) => {
+
+  const id = c.req.param("id")
+
+  const userId = c.get("userId")
+
+  await c.env.DB.prepare(
+    "DELETE FROM boards WHERE id=? AND user_id=?"
+  )
+    .bind(id, userId)
+    .run()
+
+  return c.json({
+    message: "deleted"
+  })
+
+})
+
+export default app
