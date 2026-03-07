@@ -1,14 +1,11 @@
 import { Context, Next } from "hono"
 import { verifyToken } from "../services/jwt"
 
-type Variables = {
+type TokenPayload = {
   userId: string
 }
 
-export async function authMiddleware(
-  c: Context<{ Variables: Variables }>,
-  next: Next
-) {
+export async function authMiddleware(c: Context, next: Next) {
 
   const auth = c.req.header("Authorization")
 
@@ -20,15 +17,16 @@ export async function authMiddleware(
 
   try {
 
-    const payload: any = verifyToken(token)
+    const payload = await verifyToken(token) as TokenPayload
 
     c.set("userId", payload.userId)
 
     await next()
 
-  } catch {
+  } catch (err) {
 
     return c.json({ error: "Invalid token" }, 401)
 
   }
+
 }

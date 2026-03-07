@@ -1,4 +1,4 @@
-export type Bindings = {
+export type Env = {
   DB: D1Database
 }
 

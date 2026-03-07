@@ -1,57 +1,76 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
 
 export default function Login() {
-  const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter()
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
   const [errors, setErrors] = useState({
     email: "",
     password: "",
-  });
+  })
 
   const handleSubmit = async () => {
+
     let newErrors = {
       email: "",
       password: "",
-    };
+    }
 
     if (!email.includes("@") || email.includes(" ")) {
-      newErrors.email = "อีเมลไม่ถูกต้อง";
+      newErrors.email = "อีเมลไม่ถูกต้อง"
     }
 
     if (password.length < 8) {
-      newErrors.password = "รหัสผ่านต้องอย่างน้อย 8 ตัว";
+      newErrors.password = "รหัสผ่านต้องอย่างน้อย 8 ตัว"
     }
 
     if (password.includes(" ")) {
-      newErrors.password = "รหัสผ่านห้ามมีช่องว่าง";
+      newErrors.password = "รหัสผ่านห้ามมีช่องว่าง"
     }
 
-    setErrors(newErrors);
+    setErrors(newErrors)
 
     if (!newErrors.email && !newErrors.password) {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
 
-      const data = await res.json();
+      try {
 
-      if (res.ok) {
-        router.push("/");
-      } else {
-        alert(data.error || "เข้าสู่ระบบไม่สำเร็จ");
+        const res = await fetch("http://localhost:8787/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          alert(data.error || "เข้าสู่ระบบไม่สำเร็จ")
+          return
+        }
+
+        // เก็บ token
+        localStorage.setItem("token", data.token)
+
+        // redirect หน้า board
+        router.push("/")
+
+      } catch (err) {
+        alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้")
       }
-    }
-  };
 
+    }
+  }
     return(
         <div className="bg-[#bae5f4] min-h-screen flex items-center justify-center">
             <div className='flex flex-col items-center justify-center w-[750px] h-[550px] bg-white border rounded-2xl'>
@@ -93,7 +112,7 @@ export default function Login() {
                     </Link>
                     <button onClick={handleSubmit} className='w-[200px] h-[40px] bg-[#131376] rounded-2xl text-white text-[14px] font-bold mt-[70px]'>เข้าสู่ระบบ</button>
                     <span className='text-[12px] font-bold text-black mt-2'>ยังไม่มีบัญชี? 
-                    <Link href="/user/signup"><span className='text-[#131376] underline decoration-[#131376] mt-2 cursor-pointer'>สมัครสมาชิก</span></Link>
+                    <Link href="/signup"><span className='text-[#131376] underline decoration-[#131376] mt-2 cursor-pointer'>สมัครสมาชิก</span></Link>
                     </span>
             </div>
         </div>

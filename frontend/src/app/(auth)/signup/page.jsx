@@ -1,55 +1,91 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 
-export default function Signup(){
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
+export default function Signup() {
 
-    const [errors, setErrors] = useState({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    })
+  const router = useRouter()
 
-    const handleSubmit = () => {
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
 
-        let newErrors = {
-            username: "",
-            email: "",
-            password: "",
-            confirmPassword: ""
-        }
+  const [errors, setErrors] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  })
 
-        if (!username.trim()) {
-            newErrors.username = "กรุณากรอกชื่อผู้ใช้"
-        }
+  const handleSubmit = async () => {
 
-        if (!email.includes("@") || email.includes(" ")) {
-            newErrors.email = "กรุณากรอกอีเมลให้ถูกต้อง"
-        }
-
-        if (password.length < 8) {
-            newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัว"
-        }
-
-        if (password.includes(" ")) {
-            newErrors.password = "รหัสผ่านห้ามมีช่องว่าง"
-        }
-
-        if (password !== confirmPassword) {
-            newErrors.confirmPassword = "รหัสผ่านไม่ตรงกัน"
-        }
-
-        setErrors(newErrors)
-
-        if (!newErrors.username && !newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
-        alert("สมัครสมาชิกสำเร็จ")
-        }
+    let newErrors = {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
     }
+
+    if (!username.trim()) {
+      newErrors.username = "กรุณากรอกชื่อผู้ใช้"
+    }
+
+    if (!email.includes("@") || email.includes(" ")) {
+      newErrors.email = "กรุณากรอกอีเมลให้ถูกต้อง"
+    }
+
+    if (password.length < 8) {
+      newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัว"
+    }
+
+    if (password.includes(" ")) {
+      newErrors.password = "รหัสผ่านห้ามมีช่องว่าง"
+    }
+
+    if (password !== confirmPassword) {
+      newErrors.confirmPassword = "รหัสผ่านไม่ตรงกัน"
+    }
+
+    setErrors(newErrors)
+
+    if (!newErrors.username && !newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
+
+      try {
+
+        const res = await fetch("http://localhost:8787/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: username,
+            email: email,
+            password: password
+          })
+        })
+
+        const data = await res.json()
+
+        if (!res.ok) {
+          alert(data.error || "สมัครสมาชิกไม่สำเร็จ")
+          return
+        }
+
+        alert("ส่ง OTP ไปยังอีเมลแล้ว")
+
+        // ส่ง email ไปหน้า verify
+        router.push(`/verify?email=${email}`)
+
+      } catch (error) {
+        alert("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้")
+      }
+
+    }
+
+  }
+
 
     return(
         <div className="bg-[#bae5f4] min-h-screen flex items-center justify-center">

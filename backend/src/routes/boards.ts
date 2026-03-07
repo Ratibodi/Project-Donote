@@ -1,24 +1,13 @@
 import { Hono } from "hono"
+
+
 import { authMiddleware } from "../middleware/auth"
 import { nanoid } from "nanoid"
 
-type Bindings = {
-  DB: D1Database
-}
-
-type Variables = {
-  userId: string
-}
-
-const app = new Hono<{
-  Bindings: Bindings
-  Variables: Variables
-}>()
+const app = new Hono()
 
 app.use("*", authMiddleware)
 
-
-// GET boards
 app.get("/", async (c) => {
 
   const userId = c.get("userId")
@@ -30,11 +19,9 @@ app.get("/", async (c) => {
     .all()
 
   return c.json(boards.results)
-
 })
 
 
-// CREATE board
 app.post("/", async (c) => {
 
   const userId = c.get("userId")
@@ -53,11 +40,9 @@ app.post("/", async (c) => {
     id,
     name
   })
-
 })
 
 
-// DELETE board
 app.delete("/:id", async (c) => {
 
   const id = c.req.param("id")
@@ -70,10 +55,7 @@ app.delete("/:id", async (c) => {
     .bind(id, userId)
     .run()
 
-  return c.json({
-    message: "deleted"
-  })
-
+  return c.json({ message: "deleted" })
 })
 
 export default app

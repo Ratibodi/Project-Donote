@@ -1,16 +1,15 @@
 CREATE TABLE users (
-  id TEXT PRIMARY KEY,
-  email TEXT UNIQUE,
-  password TEXT,
-  name TEXT,
-  verified INTEGER DEFAULT 0
+ id TEXT PRIMARY KEY,
+ name TEXT,
+ email TEXT UNIQUE,
+ password TEXT,
+ verified INTEGER
 );
 
 CREATE TABLE otp_codes (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT,
-  code TEXT,
-  expire_at DATETIME
+ email TEXT,
+ code TEXT,
+ expire_at TEXT
 );
 
 CREATE TABLE boards (
