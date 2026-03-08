@@ -1,13 +1,17 @@
 import { Hono } from "hono"
-
-
 import { authMiddleware } from "../middleware/auth"
 import { nanoid } from "nanoid"
 
-const app = new Hono()
+import type { Env, Variables } from "../types"
+
+const app = new Hono<{
+  Bindings: Env
+  Variables: Variables
+}>()
 
 app.use("*", authMiddleware)
 
+// GET boards
 app.get("/", async (c) => {
 
   const userId = c.get("userId")
@@ -15,13 +19,14 @@ app.get("/", async (c) => {
   const boards = await c.env.DB.prepare(
     "SELECT * FROM boards WHERE user_id=?"
   )
-    .bind(userId)
-    .all()
+  .bind(userId)
+  .all()
 
   return c.json(boards.results)
 })
 
 
+// CREATE board
 app.post("/", async (c) => {
 
   const userId = c.get("userId")
@@ -33,8 +38,8 @@ app.post("/", async (c) => {
   await c.env.DB.prepare(
     "INSERT INTO boards (id,name,user_id) VALUES (?,?,?)"
   )
-    .bind(id, name, userId)
-    .run()
+  .bind(id, name, userId)
+  .run()
 
   return c.json({
     id,
@@ -43,6 +48,7 @@ app.post("/", async (c) => {
 })
 
 
+// DELETE board
 app.delete("/:id", async (c) => {
 
   const id = c.req.param("id")
@@ -52,8 +58,8 @@ app.delete("/:id", async (c) => {
   await c.env.DB.prepare(
     "DELETE FROM boards WHERE id=? AND user_id=?"
   )
-    .bind(id, userId)
-    .run()
+  .bind(id, userId)
+  .run()
 
   return c.json({ message: "deleted" })
 })
